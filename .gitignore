@@ -1,0 +1,21 @@
+# 가상환경
+venv/
+
+# Python 캐시 및 빌드
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+
+# 에디터/IDE 설정
+.vscode/
+.idea/
+
+# OS별 자동 생성 파일
+.DS_Store
+Thumbs.db
+
+# 환경변수 파일 (보안 정보)
+.env
