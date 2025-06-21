@@ -2,7 +2,7 @@ import streamlit as st
 from database import SessionLocal
 from models.expense import Expense
 from models.categoryType import SubCategory
-from models.mappings import sub_category_map  
+from models.mappings import spend_map  
 from database import init_db
 from datetime import datetime
 
@@ -16,8 +16,8 @@ months = [f"{m:02d}" for m in range(1, 13)]  # 01 ~ 12
 st.title("💸 소비 관리")
 
 with st.form("expense_form", clear_on_submit=True):
-    sub_category = st.selectbox("소비 카테고리", list(sub_category_map.keys()))
-    sub_category_enum = sub_category_map[sub_category]
+    sub_category = st.selectbox("소비 카테고리", list(spend_map.keys()))
+    sub_category_enum = spend_map[sub_category]
     
     # 연/월 선택
     col1, col2 = st.columns(2)

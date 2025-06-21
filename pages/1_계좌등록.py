@@ -3,7 +3,8 @@ from database import SessionLocal
 from models.account import Account
 from models.categoryType import AccountType
 from models.mappings import account_map
-from database import init_db
+from database import init_db, get_session
+import pandas as pd
 
 init_db()  # 테이블 생성
 
@@ -37,3 +38,20 @@ if submitted:
         finally:
             db.close()
 
+session = next(get_session())
+
+# 1. 계좌 목록 불러오기
+accounts = session.query(Account).all()
+
+# Account 객체들을 딕셔너리로 변환
+df_accounts = pd.DataFrame([
+    {
+        "은행": acc.bank_name,
+        "계좌명": acc.account_name,
+        "계좌유형": acc.account_type.value  # Enum일 경우 .value 필요
+    }
+    for acc in accounts
+])
+
+st.markdown("#### 📂 등록된 계좌 목록")
+st.dataframe(df_accounts, hide_index=True)

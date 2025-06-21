@@ -8,12 +8,12 @@ from models.asset_snapshot import AssetSnapshot
 DATABASE_URL = "sqlite:///finance.db"
 
 engine = create_engine(DATABASE_URL, echo=True, future=True)
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-def get_db():
+def get_session():
     db = SessionLocal()
     try:
         yield db
