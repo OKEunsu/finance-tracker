@@ -9,6 +9,5 @@ class Account(Base):
     bank_name = Column(String, nullable=False)
     account_name = Column(String, nullable=False)
     account_type = Column(Enum(AccountType), nullable=False)
-        
 
 
