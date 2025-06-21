@@ -1,23 +1,39 @@
 import streamlit as st
 from database import SessionLocal
 from models.account import Account
-from models.asset_snapshot import AssetSnapshot
+from models.categoryType import AccountType
+from models.mappings import account_map
+from database import init_db
+
+init_db()  # 테이블 생성
 
 st.title("💳 계좌 등록")
 
-with st.form("account_form"):
+with st.form("account_form", clear_on_submit=True):
     bank_name = st.text_input("은행명", placeholder="예: 카카오뱅크")
     account_name = st.text_input("계좌명", placeholder="예: 생활비")
-    account_type = st.selectbox("계좌 유형", ["CHECKING", "SAVING", "INVESTMENT", "LOAN", "ETC"])
-    year_month = st.text_input("기준 월", placeholder="예: 2024-06")
+    account_type_label = st.selectbox("계좌 유형", list(account_map.keys()))
+    account_type_enum = account_map[account_type_label]
+    repayment_date = st.text_input("상환일", placeholder="예: 15일")
 
     submitted = st.form_submit_button("계좌 등록")
 
 if submitted:
-    db = SessionLocal()
-    acc = Account(bank_name=bank_name, account_name=account_name, account_type=account_type)
-    db.add(acc)
-    db.commit()
-    db.refresh(acc)  
+    if not bank_name or not account_name:
+        st.warning("⚠️ 은행명과 계좌명은 필수 입력 항목입니다.")
+    else:
+        db = SessionLocal()
+        try:
+            acc = Account(
+                bank_name=bank_name,
+                account_name=account_name,
+                account_type=account_type_enum,
+                repayment_date=repayment_date if repayment_date else None
+            )
+            db.add(acc)
+            db.commit()
+            db.refresh(acc)
+            st.success(f"✅ 계좌 '{account_name}'이(가) 등록되었습니다!")
+        finally:
+            db.close()
 
-    st.success(f"✅ 계좌 '{account_name}'이(가) 등록되었습니다!")

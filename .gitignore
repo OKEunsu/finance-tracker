@@ -22,3 +22,6 @@ Thumbs.db
 
 # 로컬 SQLite DB 파일
 finance.db
+
+# 테스트 ipynb 파일
+main.ipynb

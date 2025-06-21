@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum
 from models.base import Base
-from models.account_type import AccountType
+from models.categoryType import AccountType
 
 class Account(Base):
     __tablename__ = "accounts"
@@ -9,5 +9,7 @@ class Account(Base):
     bank_name = Column(String, nullable=False)
     account_name = Column(String, nullable=False)
     account_type = Column(Enum(AccountType), nullable=False)
+    repayment_date = Column(String, nullable=True)
+    
 
 
