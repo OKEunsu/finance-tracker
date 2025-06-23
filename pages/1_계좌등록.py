@@ -8,6 +8,8 @@ import pandas as pd
 
 init_db()  # 테이블 생성
 
+st.set_page_config(layout="centered")
+
 st.title("💳 계좌 등록")
 
 with st.form("account_form", clear_on_submit=True):

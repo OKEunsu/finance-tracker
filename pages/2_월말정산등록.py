@@ -13,12 +13,14 @@ current_year = datetime.now().year
 years = [str(y) for y in range(current_year - 1, current_year+1)]
 months = [f"{m:02d}" for m in range(1, 13)]  # 01 ~ 12
 
+st.set_page_config(layout="centered")
+
 # 1. 계좌 목록 불러오기
 accounts = session.query(Account).all()
 account_names = [acc.account_name for acc in accounts]
 account_map = {acc.account_name: acc.id for acc in accounts}
 
-st.subheader("📅 월말 자산 정산 등록")
+st.title("📅 월말 자산 정산 등록")
 
 # 2. 선택 박스
 selected_account = st.selectbox("정산할 계좌를 선택하세요", account_names)

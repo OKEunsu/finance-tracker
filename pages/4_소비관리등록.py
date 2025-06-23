@@ -11,8 +11,9 @@ init_db()  # 테이블 생성
 # 현재 연도 기준 범위 설정
 current_year = datetime.now().year
 years = [str(y) for y in range(current_year - 2, current_year+1)]
-months = [f"{m:02d}" for m in range(1, 13)]  # 01 ~ 12
+months = [f"{m:02d}" for m in range(1, 13)]  # 01 ~ 
 
+st.set_page_config(layout="centered")
 st.title("💸 소비 관리")
 
 with st.form("expense_form", clear_on_submit=True):
