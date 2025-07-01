@@ -36,7 +36,7 @@ if submitted:
     try:
         expense = Expense(
             sub_category=sub_category_enum,
-            year_month=month_date,
+            date=month_date,  # 여기 수정됨
             amount=int(amount)
         )
         db.add(expense)

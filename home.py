@@ -6,7 +6,8 @@ from models.compute import compute_financial_metrics  # 추후 사용 예정
 import plotly.express as px
 
 # 페이지 설정
-st.set_page_config(layout='wide')
+st.set_page_config(page_title="자산관리", page_icon="🏠", layout="wide")
+
 st.title("🏠 자산관리 홈")
 
 # -------------------------------
@@ -219,11 +220,69 @@ fig.update_traces(
 )
 fig.update_xaxes(dtick="M1", tickformat="%Y-%m")
 fig.update_yaxes(
-    range=[0, 3_000_000],
+    range=[0, 4_000_000],
     title='소비액 (원)',
     tickformat=',',
     showgrid=False
 )
+st.plotly_chart(fig, use_container_width=True)
+
+df_pie = spend_df[spend_df["category"] != "Total"].copy()
+
+# ✅ 1. 드롭다운에서 Total 제거
+number_cols = [col for col in df_pie.columns if col not in ["category", "Total"]]
+selected_month = st.selectbox("📅 조회할 월을 선택하세요", options=number_cols)
+
+# ✅ 2. 해당 월 기준 데이터 추출
+pie_data = df_pie[["category", selected_month]].copy()
+pie_data = pie_data[pie_data[selected_month] > 0]
+pie_data.columns = ["category", "amount"]
+
+# 소비 데이터 준비 (pie_data: category, amount 포함)
+total_amount = int(pie_data["amount"].sum())
+total_text = f"{total_amount:,.0f}원"
+
+# ✅ 3. 카테고리 상위 N개 + 기타 처리
+N = 7
+pie_data = pie_data.sort_values(by="amount", ascending=False)
+top = pie_data[:N]
+others = pie_data[N:]
+
+if not others.empty:
+    others_sum = pd.DataFrame([{
+        "category": "기타",
+        "amount": others["amount"].sum()
+    }])
+    pie_data = pd.concat([top, others_sum], ignore_index=True)
+
+# ✅ 4. 커스텀 색상 설정 (원하면 이 리스트 바꿔도 됨)
+color_sequence = [
+    "#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#845EC2", "#FF9671", "#00C9A7", "#B0A8B9"
+]
+
+# ✅ 5. 파이차트 크기 키우고 시각화
+fig = px.pie(
+    pie_data,
+    names="category",
+    values="amount",
+    title=f"{selected_month} 소비 비중",
+    color_discrete_sequence=color_sequence,
+    hole=0.4  # 도넛 스타일
+)
+
+# 중앙 텍스트 추가 (annotation)
+fig.update_layout(
+    title_text=f"{selected_month} 소비 비중",
+    annotations=[dict(
+        text=total_text,
+        x=0.5, y=0.5,
+        font_size=18,
+        showarrow=False
+    )],
+    height=500
+)
+fig.update_traces(textinfo="percent+label")  # 퍼센트와 라벨 같이
+
 st.plotly_chart(fig, use_container_width=True)
 
 # ✅ 소비 내역 테이블

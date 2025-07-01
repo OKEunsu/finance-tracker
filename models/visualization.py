@@ -39,6 +39,7 @@ def viz_spend_df() -> pd.DataFrame:
     
     pivot_df = pivot_df.reset_index()
     pivot_df = pivot_df.drop(columns='index')
+    pivot_df = pivot_df.loc[:, (pivot_df != 0).any(axis=0)]
     return pivot_df 
 
 def viz_asset_df() -> pd.DataFrame:
@@ -63,15 +64,7 @@ def viz_asset_df() -> pd.DataFrame:
     } for e in asset_data])
     
     asset_df["account_type"] = asset_df["account_type"].apply(lambda x: x.name)
-    # groupby
-    # asset_df_group = asset_df.groupby(by=['date']).agg(
-    # net_worth = ("amount", "sum"),
-    # deft = ("amount", lambda x: x[asset_df.loc[x.index, "account_type"] == "LOAN"].sum())
-    # )
-    # asset_df_group['total_assets'] = asset_df_group['net_worth'] + abs(asset_df_group['deft'])
-    # asset_df_group['deft_ratio'] = round(abs(asset_df_group['deft']) / asset_df_group['total_assets'] * 100, 2)
-    # asset_df_group['liquidity_ratio'] = round(asset_df_group['net_worth'] / asset_df_group['total_assets'] * 100, 2)
-    
+
     pivot_df = pd.pivot_table(
     asset_df,
     index="date",       # 행: 계좌별
